@@ -2148,16 +2148,43 @@
         document.body.removeChild(a);
       }
 
+      function triggerGoogleDriveDownload(url) {
+        var a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      var winDownloadCard = document.getElementById('dl-win-card');
+      if (winDownloadCard) {
+        winDownloadCard.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            winDownloadCard.click();
+          }
+        });
+      }
+
       dlCards.forEach(function(card) {
         if (!card) return;
         card.addEventListener('click', function() {
           var fileName = 'ratheuse.zip';
-          if (card.id.indexOf('linux') !== -1) {
-            fileName = 'ratheuse-linux.zip';
-          }
+          var gdriveUrl = 'https://drive.google.com/uc?export=download&id=1DJtenxTgtbqz7TuIIfBg1Xa8LR417kSE';
 
-          // Trigger the browser file download
-          triggerFileDownload('/' + fileName, fileName);
+          if (card.id === 'dl-win-card') {
+            triggerGoogleDriveDownload(gdriveUrl);
+            fileName = 'ratheuse.zip';
+          } else {
+            if (card.id.indexOf('linux') !== -1) {
+              fileName = 'ratheuse-linux.zip';
+            }
+
+            // Trigger the browser file download
+            triggerFileDownload('/' + fileName, fileName);
+          }
 
           if (dlStatusBar && dlStatusLabel && dlProgressFill && dlStatusPct) {
             dlStatusBar.classList.add('active');

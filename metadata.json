@@ -1,0 +1,8 @@
+{
+  "name": "Remix Ratheuse",
+  "description": "Real-time PC hardware utilization monitor featuring interactive telemetry spotlight, operative specs, and step-by-step install, setup, and uninstall tutorials.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

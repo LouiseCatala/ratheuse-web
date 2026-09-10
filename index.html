@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ratheuse // Hardware Utilization Monitor</title>
+  <meta name="description" content="Real-time PC hardware utilization monitor featuring interactive telemetry spotlight, operative specs, and step-by-step install, setup, and uninstall tutorials.">
+  <meta property="og:title" content="Ratheuse // Hardware Utilization Monitor">
+  <meta property="og:description" content="Real-time PC hardware utilization monitor featuring interactive telemetry spotlight, operative specs, and step-by-step install, setup, and uninstall tutorials.">
+
+  <!-- FONTS -->
+  <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/b1314443e183d1cdd77049077c46facc?family=Orbitron-Medium">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cream: #FBDBAF;
+      --muted: rgba(251, 219, 175, 0.72);
+      --label: rgba(251, 219, 175, 0.48);
+      --orange: #E07020;
+      --card: rgba(10, 8, 7, 0.58);
+      --model-height: min(97vh, 96vw, 960px);
+      --model-width: calc(var(--model-height) * 992 / 1068);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    html, body {
+      background: #C45A18;
+      color: var(--cream);
+      overflow-x: hidden;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    h1, h2, h3, .heading-font {
+      font-family: 'Orbitron-Medium', 'Arial Narrow', sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    /* Hero Container */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: #C45A18;
+    }
+
+    /* Separate Image Layers (Equal Height, Bigness, and Position) */
+    .hero-base-img,
+    .hero-reveal-img {
+      position: absolute;
+      inset: 0;
+      background-size: var(--model-width) var(--model-height);
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
+    .hero-base-img {
+      z-index: 1;
+      -webkit-mask-image: radial-gradient(circle 170px at 50% 50%, transparent 0%, transparent 28%, rgba(255,255,255,0.12) 48%, rgba(255,255,255,0.38) 66%, rgba(255,255,255,0.72) 84%, rgba(255,255,255,0.94) 94%, #fff 100%);
+      mask-image: radial-gradient(circle 170px at 50% 50%, transparent 0%, transparent 28%, rgba(255,255,255,0.12) 48%, rgba(255,255,255,0.38) 66%, rgba(255,255,255,0.72) 84%, rgba(255,255,255,0.94) 94%, #fff 100%);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      transition: filter 0.3s ease, opacity 0.25s ease;
+    }
+
+    .hero-reveal-img {
+      z-index: 2;
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(circle 170px at 50% 50%, #fff 0%, #fff 28%, rgba(255,255,255,0.88) 48%, rgba(255,255,255,0.62) 66%, rgba(255,255,255,0.28) 84%, rgba(255,255,255,0.06) 94%, transparent 100%);
+      mask-image: radial-gradient(circle 170px at 50% 50%, #fff 0%, #fff 28%, rgba(255,255,255,0.88) 48%, rgba(255,255,255,0.62) 66%, rgba(255,255,255,0.28) 84%, rgba(255,255,255,0.06) 94%, transparent 100%);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      transition: filter 0.3s ease, opacity 0.25s ease;
+    }
+
+    /* Hide cursor circle / torch */
+    .spotlight-torch {
+      display: none !important;
+    }
+
+    /* Clean Landing Top Navigation */
+    .landing-nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 25;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 26px 44px;
+      pointer-events: auto;
+      background: linear-gradient(180deg, rgba(10, 8, 7, 0.65) 0%, rgba(10, 8, 7, 0) 100%);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .brand-group:hover {
+      opacity: 0.92;
+      transform: scale(1.03);
+    }
+
+    .brand-group:hover .brand-logo-badge {
+      box-shadow: 0 0 22px rgba(224, 112, 32, 0.45);
+      border-color: rgba(224, 112, 32, 0.65);
+    }
+
+    .brand-group:active {
+      transform: scale(0.97);
+    }
+
+    .brand-logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(224, 112, 32, 0.16);
+      border: 1px solid rgba(224, 112, 32, 0.4);
+      display: grid;
+      place-items: center;
+      color: var(--orange);
+      box-shadow: 0 0 16px rgba(224, 112, 32, 0.25);
+    }
+
+    .brand-text {
+      font-family: 'Orbitron-Medium', 'Arial Narrow', sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.16em;
+      color: var(--cream);
+      font-weight: 600;
+    }
+
+    .nav-creator-btn {
+      border: 1px solid rgba(251, 219, 175, 0.4);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      color: var(--cream);
+      background: rgba(14, 11, 9, 0.6);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-creator-btn svg {
+      transition: transform 0.2s ease;
+    }
+
+    .nav-creator-btn:hover {
+      background: var(--cream);
+      color: #120e0a;
+      border-color: var(--cream);
+      box-shadow: 0 0 20px rgba(251, 219, 175, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .nav-creator-btn:hover svg {
+      transform: translateX(3px);
+    }
+
+    .nav-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-tutorials-btn {
+      border: 1px solid rgba(251, 219, 175, 0.35);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      color: var(--cream);
+      background: rgba(14, 11, 9, 0.45);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .nav-tutorials-btn:hover {
+      background: rgba(251, 219, 175, 0.18);
+      border-color: var(--cream);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 0 16px rgba(251, 219, 175, 0.2);
+    }
+
+    /* Clean UI Overlay Grid */
+    .hero-ui {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 96px 44px 44px;
+      pointer-events: none;
+    }
+
+    /* Left Column */
+    .hero-left {
+      grid-column: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      min-width: 0;
+      pointer-events: auto;
+    }
+
+    .hero-copy {
+      max-width: 440px;
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(2.2rem, 4.4vw, 3.8rem);
+      line-height: 1.02;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-shadow: 0 2px 28px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-copy h1 span {
+      display: block;
+    }
+
+    .hero-copy p {
+      margin-top: 14px;
+      max-width: 360px;
+      font-size: 13.5px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    /* Actions Row (Download Button + 3 Clean Mode Toggles) */
+    .hero-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 999px;
+      background: var(--cream);
+      color: #1a1209;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      border: 1px solid var(--cream);
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(251, 219, 175, 0.25);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-1px);
+      background: #fff;
+      box-shadow: 0 6px 24px rgba(251, 219, 175, 0.4);
+    }
+
+    /* 3 Circular Mode Icons */
+    .icon-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(251, 219, 175, 0.35);
+      background: rgba(14, 11, 9, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--cream);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      background: rgba(251, 219, 175, 0.15);
+      border-color: var(--cream);
+      transform: scale(1.05);
+    }
+
+    .icon-btn.active {
+      background: var(--cream);
+      color: #79340B;
+      border-color: var(--cream);
+      box-shadow: 0 0 16px rgba(251, 219, 175, 0.4);
+    }
+
+    .icon-btn svg {
+      display: block;
+    }
+
+    /* Scope of Monitoring Container */
+    .specs {
+      grid-column: 2;
+      justify-self: end;
+      align-self: end;
+      margin-bottom: 8px;
+      pointer-events: auto;
+      width: min(300px, 100%);
+      background: rgba(14, 11, 9, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(251, 219, 175, 0.12);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .specs-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(251, 219, 175, 0.08);
+    }
+
+    .specs-head h3 {
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--cream);
+      margin: 0;
+    }
+
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 7px 0;
+    }
+
+    .spec-row + .spec-row {
+      border-top: 1px solid rgba(251, 219, 175, 0.06);
+    }
+
+    .spec-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(251, 219, 175, 0.65);
+      white-space: nowrap;
+    }
+
+    .spec-value {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--cream);
+      text-align: right;
+      letter-spacing: 0.01em;
+    }
+
+    /* Download Modal Backdrop & Dialog */
+    .download-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(8, 6, 5, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .download-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .download-modal {
+      width: min(500px, 100%);
+      background: #15110e;
+      border: 1px solid rgba(251, 219, 175, 0.25);
+      border-radius: 20px;
+      padding: 32px 28px 28px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+      position: relative;
+      transform: scale(0.94);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .download-modal-backdrop.open .download-modal {
+      transform: scale(1);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(251, 219, 175, 0.2);
+      background: rgba(251, 219, 175, 0.05);
+      color: var(--cream);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(251, 219, 175, 0.15);
+      border-color: var(--cream);
+    }
+
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: rgba(224, 112, 32, 0.14);
+      border: 1px solid rgba(224, 112, 32, 0.3);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      font-family: 'Orbitron-Medium', 'Arial Narrow', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.08em;
+      color: var(--cream);
+      margin: 0 0 8px;
+    }
+
+    .modal-subtitle {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin: 0 0 20px;
+    }
+
+    .os-option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .os-option-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(251, 219, 175, 0.04);
+      border: 1px solid rgba(251, 219, 175, 0.12);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .os-option-card:hover {
+      background: rgba(251, 219, 175, 0.09);
+      border-color: rgba(251, 219, 175, 0.35);
+      transform: translateX(2px);
+    }
+
+    .os-option-card.primary {
+      background: rgba(224, 112, 32, 0.12);
+      border-color: rgba(224, 112, 32, 0.38);
+    }
+
+    .os-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .os-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cream);
+    }
+
+    .os-meta {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .os-download-icon {
+      color: var(--cream);
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .download-status-bar {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+    }
+
+    .download-status-bar.active {
+      display: block;
+    }
+
+    .download-status-text {
+      font-size: 11.5px;
+      color: #86efac;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .progress-track {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #4ade80;
+      transition: width 0.4s ease;
+    }
+
+    /* CONFIRMATION POPUP ("u sure about that?") */
+    .confirm-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(8, 6, 5, 0.86);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .confirm-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .confirm-modal {
+      width: min(420px, 100%);
+      background: #15110e;
+      border: 1px solid rgba(251, 219, 175, 0.28);
+      border-radius: 20px;
+      padding: 34px 26px 26px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8), 0 0 35px rgba(224, 112, 32, 0.15);
+      position: relative;
+      transform: scale(0.92);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: center;
+    }
+
+    .confirm-modal-backdrop.open .confirm-modal {
+      transform: scale(1);
+    }
+
+    .confirm-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(224, 112, 32, 0.14);
+      border: 1px solid rgba(224, 112, 32, 0.35);
+      color: var(--orange);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .confirm-title {
+      font-family: 'Orbitron-Medium', 'Arial Narrow', sans-serif;
+      font-size: clamp(23px, 4vw, 27px);
+      letter-spacing: 0.03em;
+      color: var(--cream);
+      margin: 0 0 26px;
+      line-height: 1.25;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .confirm-btn-cancel {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cream);
+      background: rgba(251, 219, 175, 0.08);
+      border: 1px solid rgba(251, 219, 175, 0.22);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .confirm-btn-cancel:hover {
+      background: rgba(251, 219, 175, 0.16);
+      border-color: var(--cream);
+    }
+
+    .confirm-btn-proceed {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #120e0a;
+      background: var(--cream);
+      border: 1px solid var(--cream);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .confirm-btn-proceed:hover {
+      background: #ffffff;
+      box-shadow: 0 0 20px rgba(251, 219, 175, 0.45);
+      transform: translateY(-1px);
+    }
+
+    /* ANIMATIONS */
+    @keyframes heroImageIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .hero-image-animate {
+      opacity: 0;
+      animation: heroImageIn 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation-delay: 0.15s;
+    }
+
+    @keyframes wordPullUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .pull-line {
+      display: block;
+    }
+
+    .pull-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .pull-word:not(:last-child) {
+      margin-right: 0.3em;
+    }
+
+    .words-visible .pull-word {
+      animation: wordPullUp 0.55s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+        filter: blur(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+    }
+
+    .fade-up-reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      filter: blur(8px);
+    }
+
+    .fade-up-reveal.is-visible {
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after,
+      .hero-image-animate,
+      .pull-word,
+      .fade-up-reveal,
+      .fade-up-reveal.is-visible,
+      .words-visible .pull-word {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
+
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 1024px) {
+      .hero-ui {
+        padding: 32px 28px 36px;
+      }
+      .hero-page {
+        top: 32px;
+        right: 28px;
+      }
+      .specs {
+        width: min(300px, 100%);
+      }
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --model-height: min(88vh, 95vw, 820px);
+      }
+      .hero-ui {
+        padding: 28px 22px 28px;
+      }
+      .hero-page {
+        top: 28px;
+        right: 22px;
+      }
+      .hero-copy h1 {
+        font-size: clamp(1.35rem, 7.2vw, 2.4rem);
+      }
+      .hero-base-img,
+      .hero-reveal-img {
+        background-position: center center;
+      }
+      .specs {
+        width: min(340px, 100%);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .landing-nav {
+        padding: 18px 22px;
+      }
+      .hero-ui {
+        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 84px 22px 28px;
+        min-height: 100vh;
+        min-height: 100dvh;
+      }
+      .hero-left {
+        width: 100%;
+      }
+      .hero-copy {
+        max-width: 100%;
+      }
+      .hero-copy h1 {
+        font-size: clamp(1.8rem, 7vw, 2.8rem);
+      }
+      .hero-copy p {
+        font-size: 13px;
+        max-width: 100%;
+      }
+      .specs {
+        width: 100%;
+        max-width: 340px;
+        margin-top: auto;
+        align-self: flex-start;
+      }
+      .hero-base-img,
+      .hero-reveal-img {
+        background-position: center center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .landing-nav {
+        padding: 16px 18px;
+      }
+      .nav-creator-btn {
+        padding: 6px 12px;
+        font-size: 10.5px;
+        gap: 5px;
+      }
+      .hero-ui {
+        padding: 76px 18px 22px;
+      }
+      .hero-copy h1 {
+        font-size: clamp(1.5rem, 8vw, 2.2rem);
+      }
+      .hero-copy p {
+        font-size: 12.5px;
+        margin-top: 10px;
+      }
+      .hero-actions-row {
+        margin-top: 18px;
+        gap: 10px;
+      }
+      .btn-hero-primary {
+        padding: 9px 18px;
+        font-size: 12px;
+      }
+      .icon-btn {
+        width: 34px;
+        height: 34px;
+      }
+      .specs {
+        padding: 12px 16px;
+        border-radius: 14px;
+      }
+      .specs-head {
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+      }
+      .spec-row {
+        padding: 5px 0;
+      }
+      .spec-label,
+      .spec-value {
+        font-size: 11px;
+      }
+    }
+
+    /* ==========================================================================
+       TUTORIALS PAGE (Between Mouse Hero and Creator Info)
+       3 Columns: Install | Setup | Uninstall (No tables used)
+       ========================================================================== */
+    .tutorials-page {
+      position: relative;
+      background: #C45A18;
+      color: #ffffff;
+      padding: 96px 44px 104px;
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+      z-index: 9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .tutorials-container {
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .tutorials-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 48px;
+    }
+
+    .tutorials-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    .tutorials-title {
+      font-family: 'Orbitron-Medium', 'Arial Narrow', sans-serif;
+      font-size: clamp(2rem, 3.8vw, 2.8rem);
+      letter-spacing: 0.05em;
+      color: #ffffff;
+      margin: 0 0 10px;
+      line-height: 1.15;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .tutorials-subtitle {
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.88);
+      margin: 0;
+    }
+
+    /* 3 Column Grid Without Table */
+    .tutorials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .tutorial-card {
+      background: rgba(18, 14, 11, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 16px;
+      padding: 26px 22px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    .tutorial-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(255, 255, 255, 0.15);
+    }
+
+    .card-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .card-heading {
+      font-family: 'Orbitron-Medium', 'Arial Narrow', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    .card-icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+    }
+
+    .card-subtext {
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.82);
+      margin-bottom: 20px;
+    }
+
+    /* Steps List inside Column */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 0 0 18px;
+      flex-grow: 1;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-content {
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .step-title {
+      font-weight: 600;
+      color: #ffffff;
+      display: block;
+      margin-bottom: 2px;
+      font-size: 13.5px;
+    }
+
+    .step-content strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .step-content code {
+      background: rgba(0, 0, 0, 0.45);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Code / Terminal Snippet Box */
+    .command-box {
+      background: rgba(10, 7, 5, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: auto;
+      margin-bottom: 14px;
+    }
+
+    .command-text {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11.5px;
+      color: var(--cream);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .copy-cmd-btn {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 6px;
+      color: #ffffff;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .copy-cmd-btn:hover {
+      background: #ffffff;
+      color: #C45A18;
+      border-color: #ffffff;
+    }
+
+    .card-action-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .card-action-btn:hover {
+      background: #ffffff;
+      color: #C45A18;
+      border-color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .hero-scroll-btn {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.2s ease, transform 0.2s ease;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .hero-scroll-btn:hover {
+      color: var(--cream);
+      transform: translateY(2px);
+    }
+
+    .hero-scroll-btn svg {
+      animation: bounceDown 1.8s infinite ease-in-out;
+    }
+
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
+    @media (max-width: 960px) {
+      .tutorials-page {
+        padding: 70px 24px 80px;
+      }
+      .tutorials-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .card-subtext {
+        min-height: auto;
+      }
+    }
+
+    /* BOTTOM FOOTER SECTION (Orange Theme) */
+    .site-footer {
+      background: #C45A18;
+      color: #ffffff;
+      padding: 72px 48px 40px;
+      position: relative;
+      z-index: 10;
+      border-top: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-main-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1.4fr;
+      gap: 52px;
+      align-items: start;
+    }
+
+    /* Brand / Logo Card Column */
+    .footer-brand-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .footer-logo-card {
+      width: 136px;
+      height: 136px;
+      background: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      user-select: none;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .footer-logo-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    .footer-logo-circle {
+      width: 100%;
+      height: 100%;
+      border: 2px solid #C45A18;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px 6px;
+      box-sizing: border-box;
+      position: relative;
+      background: #ffffff;
+    }
+
+    .footer-logo-sub-top {
+      font-size: 8px;
+      font-weight: 700;
+      color: #C45A18;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .footer-logo-main-text {
+      font-family: 'Orbitron-Medium', 'Arial Narrow', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: #1a120b;
+      line-height: 1.1;
+      letter-spacing: 0.06em;
+    }
+
+    .footer-logo-icon {
+      margin-top: 4px;
+      color: #C45A18;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-logo-sub-bottom {
+      font-size: 7px;
+      font-weight: 700;
+      color: #8a3c0c;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .footer-brand-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.95);
+      max-width: 320px;
+      margin: 0;
+    }
+
+    /* Links Columns */
+    .footer-col-title {
+      font-family: 'Orbitron-Medium', 'Arial Narrow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 24px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .footer-link-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .footer-link-list li a {
+      color: #FBDBAF;
+      text-decoration: none;
+      font-size: 14.5px;
+      font-weight: 500;
+      transition: color 0.2s ease, transform 0.2s ease;
+      display: inline-block;
+    }
+
+    .footer-link-list li a:hover {
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    /* Visit Us / Contact Column */
+    .footer-contact-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .footer-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #ffffff;
+    }
+
+    .footer-contact-item svg {
+      width: 17px;
+      height: 17px;
+      color: #FBDBAF;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .footer-contact-item a {
+      color: #FBDBAF;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-contact-item a:hover {
+      color: #ffffff;
+    }
+
+    /* Dotted Bottom Divider */
+    .footer-bottom-divider {
+      margin-top: 60px;
+      border-top: 1px dotted rgba(255, 255, 255, 0.38);
+    }
+
+    .footer-bottom-bar {
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    @media (max-width: 960px) {
+      .footer-main-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+      .site-footer {
+        padding: 56px 28px 32px;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .footer-main-grid {
+        grid-template-columns: 1fr;
+        gap: 34px;
+      }
+      .site-footer {
+        padding: 44px 20px 28px;
+      }
+      .footer-bottom-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="hero" id="hero-main">
+    <!-- Clean Minimal Navigation Bar -->
+    <header class="landing-nav" id="landing-nav">
+      <a href="/" class="brand-group" id="brand-reload" aria-label="Reload RATHEUSE" title="Reload RATHEUSE">
+        <div class="brand-logo-badge" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
+        </div>
+        <span class="brand-text">RATHEUSE</span>
+      </a>
+
+      <div class="nav-right-actions">
+        <button type="button" class="nav-creator-btn" id="nav-creator-btn" aria-label="Made by Catala, Orland Louise">
+          <span>Made by Catala, Orland Louise</span>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Base Hero Image Layer -->
+    <div class="hero-base-img hero-image-animate" id="base-img" style="background-image: url('/images/cutiecakes.png');"></div>
+
+    <!-- Reveal Hero Image Layer (Cursor Spotlight Effects) -->
+    <div class="hero-reveal-img" id="reveal-img" style="background-image: url('/images/cyber.png');"></div>
+
+    <!-- Clean UI Layer -->
+    <div class="hero-ui" id="hero-ui">
+      <!-- Left Hero Column -->
+      <section class="hero-left" id="hero-left">
+        <div class="hero-copy" id="hero-copy">
+          <h1 class="words-pull-up" id="hero-title">
+            <span>RATHEUSE</span>
+          </h1>
+          <p class="fade-up-reveal" id="hero-desc" data-delay="0.4">Real-time PC hardware utilization monitor.</p>
+          
+          <div class="hero-actions-row fade-up-reveal" data-delay="0.55">
+            <button type="button" class="btn-hero-primary" id="main-download-btn">
+              <span>Download</span>
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 2v9M4 7l4 4 4-4M2 14h12" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+
+            <!-- Minimal Scanner Mode Icons -->
+            <div class="icon-row" id="icon-row">
+              <button type="button" class="icon-btn active" id="btn-core" aria-label="Spotlight mode" title="Spotlight">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
+                  <path d="M8 1.4L13.8 4.7V11.3L8 14.6L2.2 11.3V4.7L8 1.4Z" />
+                  <circle cx="8" cy="8" r="1.3" fill="currentColor" stroke="none" />
+                </svg>
+              </button>
+              <button type="button" class="icon-btn" id="btn-vision" aria-label="Reveal all" title="Full Reveal">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
+                  <path d="M2 5.2V2h3.2" stroke-linecap="round" />
+                  <path d="M14 5.2V2h-3.2" stroke-linecap="round" />
+                  <path d="M2 10.8V14h3.2" stroke-linecap="round" />
+                  <path d="M14 10.8V14h-3.2" stroke-linecap="round" />
+                  <rect x="5.2" y="5.2" width="5.6" height="5.6" stroke-linecap="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Scope of Monitoring Floating Widget -->
+      <section class="specs" id="specs">
+        <div class="specs-head">
+          <h3 class="words-pull-up" id="specs-title">Scope of Monitoring</h3>
+        </div>
+        <div class="spec-row fade-up-reveal" id="spec-cpu" data-delay="0.65">
+          <span class="spec-label">CPU</span>
+          <span class="spec-value">Load, Clocks &amp; Thermals</span>
+        </div>
+        <div class="spec-row fade-up-reveal" id="spec-gpu" data-delay="0.75">
+          <span class="spec-label">GPU</span>
+          <span class="spec-value">Utilization &amp; VRAM</span>
+        </div>
+        <div class="spec-row fade-up-reveal" id="spec-ram" data-delay="0.85">
+          <span class="spec-label">RAM</span>
+          <span class="spec-value">Allocation &amp; Bandwidth</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- Download Modal Dialog -->
+    <div class="download-modal-backdrop" id="download-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-heading">
+      <div class="download-modal">
+        <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">✕</button>
+        <div class="modal-badge">V2.4 // OFFICIAL</div>
+        <h3 class="modal-title" id="modal-heading">Download Ratheuse</h3>
+        <p class="modal-subtitle">Lightweight, real-time PC hardware telemetry monitor.</p>
+        
+        <div class="os-option-list">
+          <div class="os-option-card primary" id="dl-win-card" role="button" tabindex="0">
+            <div class="os-info">
+              <span class="os-name">Windows 11 / 10 (64-bit)</span>
+              <span class="os-meta">Release Archive (.zip) • 64-bit</span>
+            </div>
+            <span class="os-download-icon">
+              Download
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2v9M4 7l4 4 4-4M2 14h12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+          
+          <div class="os-option-card" id="dl-win-portable-card" role="button" tabindex="0">
+            <div class="os-info">
+              <span class="os-name">Windows Portable (64-bit)</span>
+              <span class="os-meta">Standalone (.zip) • 64-bit</span>
+            </div>
+            <span class="os-download-icon">
+              Download
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2v9M4 7l4 4 4-4M2 14h12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+
+          <div class="os-option-card" id="dl-linux-card" role="button" tabindex="0">
+            <div class="os-info">
+              <span class="os-name">Linux (64-bit)</span>
+              <span class="os-meta">Universal AppImage • x86_64</span>
+            </div>
+            <span class="os-download-icon">
+              Download
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2v9M4 7l4 4 4-4M2 14h12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="download-status-bar" id="download-status-bar">
+          <div class="download-status-text">
+            <span id="dl-status-label">Downloading ratheuse-setup.exe...</span>
+            <span id="dl-status-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="dl-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal ("u sure about that?") -->
+    <div class="confirm-modal-backdrop" id="confirm-modal" aria-hidden="true" role="dialog" aria-labelledby="confirm-heading">
+      <div class="confirm-modal">
+        <button type="button" class="modal-close-btn" id="confirm-close-btn" aria-label="Close dialog">✕</button>
+        <div class="confirm-icon-wrap" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <h3 class="confirm-title" id="confirm-heading">u sure about that?</h3>
+        <div class="confirm-actions">
+          <button type="button" class="confirm-btn-cancel" id="confirm-cancel-btn">Cancel</button>
+          <a href="blank.html" class="confirm-btn-proceed" id="confirm-proceed-btn">
+            <span>Yes, proceed</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- TUTORIALS PAGE (Between Mouse Hero and Site Footer) -->
+  <section class="tutorials-page" id="tutorials" aria-labelledby="tutorials-heading">
+    <div class="tutorials-container">
+      <div class="tutorials-header">
+        <div class="tutorials-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span>QUICKSTART GUIDE</span>
+        </div>
+        <h2 class="tutorials-title" id="tutorials-heading">TUTORIALS</h2>
+        <p class="tutorials-subtitle">
+          Direct step-by-step guides for installing, configuring, and removing Ratheuse.
+        </p>
+      </div>
+
+      <div class="tutorials-grid" id="tutorials-grid">
+        <article class="tutorial-card" id="tutorial-col-install">
+          <div class="card-top-bar">
+            <h3 class="card-heading">Install</h3>
+            <div class="card-icon-wrap" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </div>
+          </div>
+          <p class="card-subtext">Download archive, extract files, and run the administrator setup.</p>
+
+          <div class="steps-list">
+            <div class="step-item">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <strong class="step-title">Download Archive</strong>
+                <span>Download <code>ratheuse.zip</code> using the release button below.</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <strong class="step-title">Extract Files</strong>
+                <span>Right-click <code>ratheuse.zip</code> and select <strong>Extract All</strong> to your chosen folder.</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <strong class="step-title">Run As Administrator</strong>
+                <span>Open the extracted folder, right-click <code>ratheuse-setup.exe</code>, and click <strong>Run as administrator</strong>.</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <strong class="step-title">Complete Wizard</strong>
+                <span>Follow the installer prompts, click <strong>Install</strong>, and launch Ratheuse when finished.</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="tutorial-card" id="tutorial-col-setup">
+          <div class="card-top-bar">
+            <h3 class="card-heading">Setup</h3>
+            <div class="card-icon-wrap" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+          </div>
+          <p class="card-subtext">Grant sensor permissions, select hardware devices, and configure hotkeys.</p>
+
+          <div class="steps-list">
+            <div class="step-item">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <strong class="step-title">Launch Application</strong>
+                <span>Open Ratheuse from the desktop shortcut or Windows Start menu.</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <strong class="step-title">Authorize Sensors</strong>
+                <span>Click <strong>Yes</strong> on the UAC prompt to allow hardware sensor monitoring.</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <strong class="step-title">Select Hardware</strong>
+                <span>Open <strong>Settings &gt; Hardware</strong> and check your active CPU, GPU, and RAM.</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">4</span>
+              <div class="step-content">
+                <strong class="step-title">Set Refresh Rate</strong>
+                <span>Set your polling interval in Settings (500ms for gaming, 1000ms standard).</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">5</span>
+              <div class="step-content">
+                <strong class="step-title">Toggle Overlay HUD</strong>
+                <span>Press <code>Ctrl+Shift+R</code> to toggle the real-time hardware overlay on screen.</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="tutorial-card" id="tutorial-col-uninstall">
+          <div class="card-top-bar">
+            <h3 class="card-heading">Uninstall</h3>
+            <div class="card-icon-wrap" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </div>
+          </div>
+          <p class="card-subtext">Windows Add or remove programs removal and PC restart.</p>
+
+          <div class="steps-list">
+            <div class="step-item">
+              <span class="step-num">1</span>
+              <div class="step-content">
+                <span>Press <strong>Windows</strong>, then search <strong>Add or remove programs</strong>.</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">2</span>
+              <div class="step-content">
+                <span>Find <strong>Ratheuse</strong>, click it, then click <strong>Uninstall</strong>.</span>
+              </div>
+            </div>
+            <div class="step-item">
+              <span class="step-num">3</span>
+              <div class="step-content">
+                <span>Restart your PC.</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SITE FOOTER (Multi-column layout with user information) -->
+  <footer class="site-footer" id="site-footer">
+    <div class="footer-container">
+      <div class="footer-main-grid">
+        <!-- Brand / Logo Card Column -->
+        <div class="footer-brand-col" id="footer-brand-col">
+          <div class="footer-logo-card" id="footer-logo-card">
+            <div class="footer-logo-circle">
+              <span class="footer-logo-sub-top">PROJECT</span>
+              <span class="footer-logo-main-text">RATHEUSE</span>
+              <div class="footer-logo-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+              </div>
+              <span class="footer-logo-sub-bottom">PC HARDWARE TELEMETRY</span>
+            </div>
+          </div>
+          <p class="footer-brand-text">
+            Real-time PC hardware utilization monitor &mdash; ultra-lightweight, zero bloat, instant telemetry.
+          </p>
+        </div>
+
+        <!-- Creator & Links Column -->
+        <div class="footer-nav-col" id="footer-nav-creator">
+          <h4 class="footer-col-title">NAVIGATION</h4>
+          <ul class="footer-link-list">
+            <li><a href="blank.html" id="footer-link-about">About Developer</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Column -->
+        <div class="footer-contact-col" id="footer-nav-contact">
+          <h4 class="footer-col-title">GET IN TOUCH</h4>
+          <ul class="footer-contact-list">
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>Catala, Orland Louise</span>
+            </li>
+            <li class="footer-contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <a href="mailto:louise.catala@gmail.com" id="footer-link-email">louise.catala@gmail.com</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Dotted Bottom Divider & Info -->
+      <div class="footer-bottom-divider"></div>
+      <div class="footer-bottom-bar">
+        <span>&copy; 2026 Ratheuse. All rights reserved.</span>
+        <span>Crafted by Catala, Orland Louise</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // 1. SPOTLIGHT REVEAL & EFFECT CONTROLLER
+      var baseImg = document.getElementById('base-img');
+      var revealImg = document.getElementById('reveal-img');
+      var heroMain = document.getElementById('hero-main');
+
+      var currentMode = 'spotlight'; // 'spotlight', 'reveal_all', 'base_only'
+      var mouseX = window.innerWidth / 2;
+      var mouseY = window.innerHeight / 2;
+      var currentX = mouseX;
+      var currentY = mouseY;
+      var isTracking = false;
+
+      function getRadius() {
+        var w = window.innerWidth;
+        if (w < 480) return 95;
+        if (w < 768) return 130;
+        return 175;
+      }
+
+      function applySpotlight(x, y) {
+        if (!revealImg || !baseImg) return;
+
+        if (currentMode === 'reveal_all') {
+          revealImg.style.webkitMaskImage = 'none';
+          revealImg.style.maskImage = 'none';
+          revealImg.style.opacity = '1';
+
+          baseImg.style.webkitMaskImage = 'radial-gradient(circle 0px at -999px -999px, transparent, transparent)';
+          baseImg.style.maskImage = 'radial-gradient(circle 0px at -999px -999px, transparent, transparent)';
+          baseImg.style.opacity = '0';
+          return;
+        }
+
+        if (currentMode === 'base_only') {
+          revealImg.style.webkitMaskImage = 'radial-gradient(circle 0px at -999px -999px, #fff, transparent)';
+          revealImg.style.maskImage = 'radial-gradient(circle 0px at -999px -999px, #fff, transparent)';
+          revealImg.style.opacity = '0';
+
+          baseImg.style.webkitMaskImage = 'none';
+          baseImg.style.maskImage = 'none';
+          baseImg.style.opacity = '1';
+          return;
+        }
+
+        // Spotlight Mode:
+        // The base model does not appear where the mouse is pointing (transparent mask).
+        // The reveal (cyber) model appears where the mouse is pointing (#fff mask).
+        // The outer part of the circle is softly blurred / feathered with a wide multi-stop gradient.
+        revealImg.style.opacity = '1';
+        baseImg.style.opacity = '1';
+
+        var r = getRadius();
+        var rect = revealImg.getBoundingClientRect();
+        var relX = x - rect.left;
+        var relY = y - rect.top;
+
+        var revealMask = 'radial-gradient(circle ' + r + 'px at ' + relX + 'px ' + relY + 'px, #fff 0%, #fff 28%, rgba(255,255,255,0.88) 48%, rgba(255,255,255,0.62) 66%, rgba(255,255,255,0.28) 84%, rgba(255,255,255,0.06) 94%, transparent 100%)';
+        var baseMask = 'radial-gradient(circle ' + r + 'px at ' + relX + 'px ' + relY + 'px, transparent 0%, transparent 28%, rgba(255,255,255,0.12) 48%, rgba(255,255,255,0.38) 66%, rgba(255,255,255,0.72) 84%, rgba(255,255,255,0.94) 94%, #fff 100%)';
+
+        revealImg.style.webkitMaskImage = revealMask;
+        revealImg.style.maskImage = revealMask;
+
+        baseImg.style.webkitMaskImage = baseMask;
+        baseImg.style.maskImage = baseMask;
+      }
+
+      function onPointerMove(e) {
+        isTracking = true;
+        if (e.touches && e.touches.length > 0) {
+          mouseX = e.touches[0].clientX;
+          mouseY = e.touches[0].clientY;
+        } else {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+        }
+      }
+
+      // Smooth Animation Loop
+      function renderLoop() {
+        var dx = mouseX - currentX;
+        var dy = mouseY - currentY;
+        currentX += dx * 0.22;
+        currentY += dy * 0.22;
+
+        applySpotlight(currentX, currentY);
+        requestAnimationFrame(renderLoop);
+      }
+
+      window.addEventListener('mousemove', onPointerMove, { passive: true });
+      window.addEventListener('touchmove', onPointerMove, { passive: true });
+      window.addEventListener('touchstart', onPointerMove, { passive: true });
+
+      // Interactive Control Mode Buttons
+      var btnCore = document.getElementById('btn-core');
+      var btnVision = document.getElementById('btn-vision');
+      var modeButtons = [btnCore, btnVision];
+
+      function setMode(mode, activeBtn) {
+        currentMode = mode;
+        modeButtons.forEach(function(btn) {
+          if (btn) btn.classList.remove('active');
+        });
+        if (activeBtn) activeBtn.classList.add('active');
+        applySpotlight(currentX, currentY);
+      }
+
+      if (btnCore) {
+        btnCore.addEventListener('click', function() {
+          setMode('spotlight', btnCore);
+        });
+      }
+      if (btnVision) {
+        btnVision.addEventListener('click', function() {
+          if (currentMode === 'reveal_all') {
+            setMode('spotlight', btnCore);
+          } else {
+            setMode('reveal_all', btnVision);
+          }
+        });
+      }
+
+      // Start initial render loop
+      applySpotlight(currentX, currentY);
+      requestAnimationFrame(renderLoop);
+
+      // 2. WORD SPLIT
+      var pullUpEls = document.querySelectorAll('.words-pull-up');
+      pullUpEls.forEach(function(el) {
+        if (el.dataset.split) return;
+        el.dataset.split = 'true';
+
+        var directSpans = el.querySelectorAll(':scope > span');
+        if (el.tagName === 'H1' && directSpans.length > 0) {
+          var wordIndex = 0;
+          directSpans.forEach(function(span) {
+            span.classList.add('pull-line');
+            var text = span.textContent.trim();
+            var words = text.split(/\s+/).filter(Boolean);
+            span.innerHTML = '';
+            words.forEach(function(word) {
+              var wordSpan = document.createElement('span');
+              wordSpan.className = 'pull-word';
+              wordSpan.textContent = word;
+              wordSpan.style.animationDelay = (wordIndex * 0.1) + 's';
+              span.appendChild(wordSpan);
+              wordIndex++;
+            });
+          });
+        } else {
+          var text = el.textContent.trim();
+          var words = text.split(/\s+/).filter(Boolean);
+          el.innerHTML = '';
+          words.forEach(function(word, i) {
+            var wordSpan = document.createElement('span');
+            wordSpan.className = 'pull-word';
+            wordSpan.textContent = word;
+            wordSpan.style.animationDelay = (i * 0.1) + 's';
+            el.appendChild(wordSpan);
+          });
+        }
+      });
+
+      // 3. SCROLL REVEAL
+      if ('IntersectionObserver' in window) {
+        var wordsObserver = new IntersectionObserver(function(entries, observer) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('words-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.2 });
+
+        pullUpEls.forEach(function(el) {
+          wordsObserver.observe(el);
+        });
+
+        var fadeUpEls = document.querySelectorAll('.fade-up-reveal');
+        var fadeObserver = new IntersectionObserver(function(entries, observer) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              var delay = entry.target.getAttribute('data-delay');
+              if (delay) {
+                entry.target.style.animationDelay = delay + 's';
+              }
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+
+        fadeUpEls.forEach(function(el) {
+          fadeObserver.observe(el);
+        });
+      } else {
+        pullUpEls.forEach(function(el) {
+          el.classList.add('words-visible');
+        });
+        var fadeUpEls = document.querySelectorAll('.fade-up-reveal');
+        fadeUpEls.forEach(function(el) {
+          var delay = el.getAttribute('data-delay');
+          if (delay) {
+            el.style.animationDelay = delay + 's';
+          }
+          el.classList.add('is-visible');
+        });
+      }
+
+      // 4. DOWNLOAD MODAL CONTROLLER
+      var downloadModal = document.getElementById('download-modal');
+      var modalCloseBtn = document.getElementById('modal-close-btn');
+      var mainDownloadBtn = document.getElementById('main-download-btn');
+      var pageTwoDownloadBtn = document.getElementById('page-two-download-btn');
+      var dlCards = [
+        document.getElementById('dl-win-card'),
+        document.getElementById('dl-win-portable-card'),
+        document.getElementById('dl-linux-card')
+      ];
+      var dlStatusBar = document.getElementById('download-status-bar');
+      var dlStatusLabel = document.getElementById('dl-status-label');
+      var dlStatusPct = document.getElementById('dl-status-pct');
+      var dlProgressFill = document.getElementById('dl-progress-fill');
+
+      function openModal() {
+        if (!downloadModal) return;
+        downloadModal.classList.add('open');
+        downloadModal.setAttribute('aria-hidden', 'false');
+        if (dlStatusBar) dlStatusBar.classList.remove('active');
+      }
+
+      function closeModal() {
+        if (!downloadModal) return;
+        downloadModal.classList.remove('open');
+        downloadModal.setAttribute('aria-hidden', 'true');
+      }
+
+      if (mainDownloadBtn) mainDownloadBtn.addEventListener('click', openModal);
+      if (pageTwoDownloadBtn) pageTwoDownloadBtn.addEventListener('click', openModal);
+      if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+
+      // Copy to clipboard handlers for tutorial commands
+      var copyCmdBtns = document.querySelectorAll('.copy-cmd-btn');
+      copyCmdBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var cmd = btn.getAttribute('data-cmd') || '';
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(cmd).then(function() {
+              btn.textContent = 'Copied!';
+              setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+            }).catch(function() {
+              btn.textContent = 'Copied!';
+              setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+            });
+          } else {
+            btn.textContent = 'Copied!';
+            setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+          }
+        });
+      });
+
+      if (downloadModal) {
+        downloadModal.addEventListener('click', function(e) {
+          if (e.target === downloadModal) closeModal();
+        });
+      }
+
+      // 5. CONFIRMATION POPUP ("u sure about that?")
+      var brandReload = document.getElementById('brand-reload');
+      if (brandReload) {
+        brandReload.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.reload();
+        });
+      }
+
+      var navCreatorBtn = document.getElementById('nav-creator-btn');
+      var footerLinkAbout = document.getElementById('footer-link-about');
+      var confirmModal = document.getElementById('confirm-modal');
+      var confirmCloseBtn = document.getElementById('confirm-close-btn');
+      var confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+
+      function openConfirmModal(e) {
+        if (e) e.preventDefault();
+        if (!confirmModal) return;
+        confirmModal.classList.add('open');
+        confirmModal.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeConfirmModal() {
+        if (!confirmModal) return;
+        confirmModal.classList.remove('open');
+        confirmModal.setAttribute('aria-hidden', 'true');
+      }
+
+      if (navCreatorBtn) {
+        navCreatorBtn.addEventListener('click', openConfirmModal);
+      }
+      if (footerLinkAbout) {
+        footerLinkAbout.addEventListener('click', openConfirmModal);
+      }
+      if (confirmCloseBtn) {
+        confirmCloseBtn.addEventListener('click', closeConfirmModal);
+      }
+      if (confirmCancelBtn) {
+        confirmCancelBtn.addEventListener('click', closeConfirmModal);
+      }
+      if (confirmModal) {
+        confirmModal.addEventListener('click', function(e) {
+          if (e.target === confirmModal) closeConfirmModal();
+        });
+      }
+
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          if (downloadModal && downloadModal.classList.contains('open')) {
+            closeModal();
+          }
+          if (confirmModal && confirmModal.classList.contains('open')) {
+            closeConfirmModal();
+          }
+        }
+      });
+
+      // Trigger Download & Progress
+      function triggerFileDownload(filePath, fileName) {
+        var a = document.createElement('a');
+        a.href = filePath;
+        a.setAttribute('download', fileName);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      dlCards.forEach(function(card) {
+        if (!card) return;
+        card.addEventListener('click', function() {
+          var fileName = 'ratheuse.zip';
+          if (card.id.indexOf('linux') !== -1) {
+            fileName = 'ratheuse-linux.zip';
+          }
+
+          // Trigger the browser file download
+          triggerFileDownload('/' + fileName, fileName);
+
+          if (dlStatusBar && dlStatusLabel && dlProgressFill && dlStatusPct) {
+            dlStatusBar.classList.add('active');
+            dlStatusLabel.textContent = 'Downloading ' + fileName + '...';
+            dlProgressFill.style.width = '0%';
+            dlStatusPct.textContent = '0%';
+
+            var progress = 0;
+            var dlInterval = setInterval(function() {
+              progress += Math.floor(25 + Math.random() * 25);
+              if (progress >= 100) {
+                progress = 100;
+                clearInterval(dlInterval);
+                dlProgressFill.style.width = '100%';
+                dlStatusPct.textContent = '100%';
+                dlStatusLabel.textContent = '✓ Download started (' + fileName + ')';
+                setTimeout(function() {
+                  dlStatusBar.classList.remove('active');
+                  closeModal();
+                }, 1500);
+              } else {
+                dlProgressFill.style.width = progress + '%';
+                dlStatusPct.textContent = progress + '%';
+              }
+            }, 150);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
